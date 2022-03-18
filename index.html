@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <title>Life Calendar</title>
+</head>
+
+<body>
+    <!-- anywhere on the page -->
+    <main v-scope>
+        <h1>Life Calendar</h1>
+
+        <section id="info-tabs">
+            <ul class="nav nav-tabs justify-content-center mt-5" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="instructions-tab" data-bs-toggle="tab"
+                        data-bs-target="#instructions" type="button" role="tab" aria-controls="instructions"
+                        aria-selected="true">Instruction</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="trivia-tab" data-bs-toggle="tab" data-bs-target="#trivia" type="button"
+                        role="tab" aria-controls="trivia" aria-selected="false">Trivia</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button"
+                        role="tab" aria-controls="about" aria-selected="false">About</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="instructions" role="tabpanel"
+                    aria-labelledby="instructions-tab">
+                    <ul>
+                        <li>After filling the data, click "Create calendar" to see the infographic</li>
+                        <li>If you are using a screen wider than 600px each line represents 1 year, otherwise each line
+                            will be equivalent to half an year</li>
+                        <li>
+                            <span class="legend passed"></span>
+                            <span> Total of weeks you have been living</span>
+                        </li>
+                        <li>
+                            <span class="legend ahead"></span>
+                            <span> Total of weeks left to enjoy your life to the fullest</span>
+                        </li>
+                        <li>This page is ready to print, only make sure to enable "Background graphics"
+                        </li>
+                        <li>
+                            For printing, all weeks ahead are blank and the weeks behind are "pen" blue so you can paint
+                            then with a regular pen.
+                        </li>
+                        <li>
+                            Choosing the "Save" option will save your preferences in your device, so anytime you come
+                            back it will update automaticaly.
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-pane fade" id="trivia" role="tabpanel" aria-labelledby="profile-tab">
+                    <ul>
+                        <li>One year usualy has 52 weeks</li>
+                        <li>The color of a regular pen is called "Royal Blue"</li>
+                        <li>The oldest person to die had 135 years when it happend</li>
+                        <li>The global avarage life expectancy is 69.1 years for men and 73.8 years for women</li>
+                    </ul>
+                </div>
+                <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
+                    <ul>
+                        <li>This site is heavily inspired on Kurzgesagt's
+                            <a href="http://https://shop-us.kurzgesagt.org/collections/posters/products/lifespan-calendar-poster?variant=39451596423216"
+                                target="_blank" rel="noopener noreferrer">"Calendar of your life"</a>
+                        </li>
+                        <li>It's open source
+                            <a href="https://github.com/guilfer-dev/life-week-calendar" target="_blank"
+                                rel="noopener noreferrer">
+                                <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"
+                                    alt="github badge">
+                            </a>
+                        </li>
+                        <li>This is my first contact with Vue.js, more specicaly I have used Petit Vue and Bootstrap
+                        </li>
+                        <li>Although this is a very simple project, I was encouraged to learn something new from
+                            Fireship Io's Youtube channel. Wich I highly recommend:</li>
+                    </ul>
+                    <div class="yt-iframe">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/Sxxw3qtb3_g"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="user-input">
+            <div>
+                <label class="form-label" for="date"> Birthday </label>
+                <input type="date" v-model="states.date" id="date" class="form-control"></input>
+            </div>
+            <div>
+                <label class="form-label" for="lifeExpectancy"> Life expectancy</label>
+                <input type="number" min="0" v-model="states.lifeExpectancy" id="lifeExpectancy"
+                    class="form-control"></input>
+            </div>
+        </section>
+
+        <section id="options">
+            <button class="btn btn-primary btn-create" @click="
+            states.passedWeeks = calculataePassedWeeks(states.date);
+            states.remainingWeeks = calculataeRemainingWeeks(states.lifeExpectancy, states.passedWeeks);
+            ">Create calendar</button>
+            <button class="btn btn-primary" @click="saveStates()">Save</button>
+            <button class="btn btn-primary" @click="
+            window.print()
+                ">Print</button>
+        </section>
+
+        <section id="infographic">
+            <div class="grid">
+                <div class="week passed" v-for="week in Array(states.passedWeeks)"></div>
+                <div class="week ahead" v-for="week in Array(states.remainingWeeks)"></div>
+            </div>
+        </section>
+
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <script type="module">
+        import { createApp } from 'https://unpkg.com/petite-vue?module'
+
+        function calculataePassedWeeks(date) {
+            return Math.round(moment.duration(moment().diff(moment(date))).asWeeks());
+        }
+
+        function calculataeRemainingWeeks(lifeExpectancy, passedWeeks) {
+            return Math.round(lifeExpectancy * 52 - passedWeeks);
+        }
+
+        const { date, lifeExpectancy } = JSON.parse(localStorage.getItem('states')) || { date: null, lifeExpectancy: null };
+        const passedWeeks = calculataePassedWeeks(date) || 0;
+        const remainingWeeks = calculataeRemainingWeeks(lifeExpectancy, passedWeeks) || Math.round(73.8 * 52);
+
+        createApp({
+            states: {
+                date,
+                lifeExpectancy: lifeExpectancy || 73.8,
+                passedWeeks,
+                remainingWeeks
+            },
+            calculataePassedWeeks,
+            calculataeRemainingWeeks,
+            saveStates: function () {
+                localStorage.setItem('states', JSON.stringify({
+                    date: this.states.date,
+                    lifeExpectancy: this.states.lifeExpectancy
+                }));
+            }
+        }).mount()
+
+    </script>
+</body>
+
+</html>
